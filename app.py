@@ -28,6 +28,11 @@ st.header("HarvAI - V1 - Test")
 st.markdown("[Github](https://github.com/MarcusLZ/harvai)")
 
 
+columns = st.columns(2)
+retriever = columns[0].radio('Select a Retriever :', ('KNN', 'BM25', 'DPR', 'Embedding'))
+reader_generator = columns[1].radio('Select a Q/A generator :', ('Camembert', 'Other'))
+
+
 if 'generated' not in st.session_state:
     st.session_state['generated'] = []
 
@@ -42,9 +47,11 @@ def get_text():
 user_input = get_text()
 
 
+
 if user_input:
 
-    output = requests.get("http://127.0.0.1:8000/answer", params={'question': user_input})
+    output = requests.get("http://127.0.0.1:8000/answer", params={'question': user_input, 'retriever' : retriever})
+
     st.session_state.past.append(user_input)
     st.session_state.generated.append(output.json()['answer'])
 
