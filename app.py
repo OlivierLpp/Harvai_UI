@@ -9,6 +9,8 @@ from decouple import config
 import time
 
 ARTICLES = None
+START = None
+END = None
 
 st.set_page_config(
     #initial_sidebar_state="collapsed",
@@ -65,11 +67,14 @@ if user_input:
     output = requests.get("http://127.0.0.1:8000/answer", params={'question': user_input, 'retriever' : retriever, 'article_number' : nb_articles})
     print(output)
     st.session_state.past.append(user_input)
-    st.session_state.generated.append(output.json()['answer'])
-    ARTICLES = output.json()['parsed_context']
+    st.session_state.generated.append(output.json()['answer']['answer'])
+
+    ARTICLES = output.json()['context']
+    START = output.json()['answer']['start']
+    END = output.json()['answer']['end']
 
     print(retriever, nb_articles, reader_generator)
-    print(output.json()['answer'], output.json()['parsed_context'])
+    print(output.json()['answer']['answer'], output.json()['parsed_context'])
 
 
 if st.session_state['generated']:
@@ -80,21 +85,18 @@ if st.session_state['generated']:
 
 # ------------ Articles Expander ------------
 
-
-def hightlight(article, user_input):
+def hightlight(article, start, end):
     new = ""
-    input = user_input.lower().split()
-
-    for word in article.split():
-        if word.lower() in input:
-            new = new + " <mark style='background-color: DodgerBlue;'>" + word + "</mark>"
+    for count, word in enumerate(list(article)):
+        if count == int(start):
+            new = new + " <mark style='background-color: DodgerBlue;'>" + word
+        elif count == int(end):
+            new = new + word + "</mark>"
         else:
-            new = new + ' ' + word
+            new = new + word
     return new
 
 with st.expander("See Articles Returned"):
 
     if ARTICLES is not None:
-        for article in ARTICLES:
-            st.markdown("""---""")
-            st.markdown(hightlight(article, user_input), unsafe_allow_html=True)
+        st.markdown(hightlight(ARTICLES, START, END), unsafe_allow_html=True)
