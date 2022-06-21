@@ -69,7 +69,7 @@ if user_input:
     st.session_state.past.append(user_input)
     st.session_state.generated.append(output.json()['answer']['answer'])
 
-    ARTICLES = output.json()['context']
+    ARTICLES = output.json()["parsed_context"]
     START = output.json()['answer']['start']
     END = output.json()['answer']['end']
 
@@ -85,12 +85,13 @@ if st.session_state['generated']:
 
 # ------------ Articles Expander ------------
 
+
 def hightlight(article, start, end):
     new = ""
     for count, word in enumerate(list(article)):
-        if count == int(start):
+        if count == int(start) and start > 0:
             new = new + " <mark style='background-color: DodgerBlue;'>" + word
-        elif count == int(end):
+        elif count == int(end) and end > 0:
             new = new + word + "</mark>"
         else:
             new = new + word
@@ -99,4 +100,7 @@ def hightlight(article, start, end):
 with st.expander("See Articles Returned"):
 
     if ARTICLES is not None:
-        st.markdown(hightlight(ARTICLES, START, END), unsafe_allow_html=True)
+        for article2 in ARTICLES:
+            st.markdown(hightlight(article2, START, END), unsafe_allow_html=True)
+            START = START - len(article2)
+            END = END - len(article2)
