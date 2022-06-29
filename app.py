@@ -38,18 +38,18 @@ from PIL import Image
 image = Image.open('images/robot_reading.png')
 st.sidebar.image(image)
 st.sidebar.markdown("<div><h1 style='text-align: center; color: white;'>HarvAI</h1></div>", unsafe_allow_html=True)
-st.sidebar.markdown("This chat bot allows find answer on your french traffic regulation question using Python and Streamlit.")
-st.sidebar.markdown("To get started <ol><li>Write the question you wish to ask in the question bar and press enter</li> <li>You can finetune parameters below.</li></ol>",unsafe_allow_html=True)
+st.sidebar.markdown("Un chatbot intelligent qui répond directement à toutes vos questions juridiques sur le code de la route.")
+st.sidebar.markdown("<br>Pour commencer : <ol><li> Ecrivez une question dans l'espace alloué et appuyez sur entrer</li> <li>Vous pouvez modifier les paramètres via les commandes ci dessous</li></ol>",unsafe_allow_html=True)
 
 # ------------ Parameters------------
 
 st.sidebar.markdown(f"""
-    ## Parameters :
+    ## Paramètres :
     """)
 
-retriever =st.sidebar.radio('Select a Retriever :', ('KNN', 'BM25', 'DPR', 'Embedding'),index=3)
-nb_articles = st.sidebar.slider('Select a number of articles :', 1, 10, 4)
-reader_generator = st.sidebar.radio('Select a Q/A generator :', ('Camembert', 'Other'))
+retriever =st.sidebar.radio('Retriever :', ('KNN', 'BM25', 'DPR', 'Embedding'),index=0)
+nb_articles = st.sidebar.slider("Nombre d'articles retournés:", 1, 10, 4)
+#reader_generator = st.sidebar.radio('Selectionner le reader :', ('Camembert', 'Other'))
 st.sidebar.markdown("[Github](https://github.com/MarcusLZ/harvai)")
 
 
@@ -114,6 +114,6 @@ def hightlight(articles, start, end, reference):
     return new
 
 with col2:
-    st.markdown("Articles Returned :")
+    st.markdown("Articles retournés :")
     if ARTICLES is not None:
         st.markdown(hightlight(ARTICLES, START, END, ARTICLES_REFERENCE), unsafe_allow_html=True)
